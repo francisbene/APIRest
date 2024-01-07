@@ -38,7 +38,7 @@ const save = async (req, h) => {
 }
 
 const remove = async (req, h) => {
-    await ProductModel.findOneAndDelete({_id: req.params.id});
+    await productModel.findOneAndDelete({_id: req.params.id});
     return h.response().code(204);
  }
   
