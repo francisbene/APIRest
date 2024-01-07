@@ -1,5 +1,5 @@
 const productModel = require('../modules/product');
-//Criando função transformer 
+
 const transformer = product => ({
     type: 'products',
     id: product.id,
@@ -8,14 +8,22 @@ const transformer = product => ({
       price: product.price,
     },
     links: {
-      self: `/api/v1/products/${product.id}`
+      self: '/api/v1/products/${product.id}'
     }
   });
+
   
  const getAll = async () => {
-    const products = await ProductRepository.getAll();
-    return { data: products.map(transformer) };
+    
+    const products = await productModel.find({});
+    return {data: products.map(transformer)};
  };
+
+ const find = async (req) => {
+    const product = await ProductModel.findById(req.params.id);
+    return { data: transformer(product) };
+  };
+  
 
 const save = async (req, h) => {
     const {name, price} = req.payload;
@@ -26,10 +34,18 @@ const save = async (req, h) => {
 
     await product.save();
 
-    return h.response({data: product}).code(201);
+    return h.response(transformer(product)).code(201);
 }
+
+const remove = async (req, h) => {
+    await ProductModel.findOneAndDelete({_id: req.params.id});
+    return h.response().code(204);
+ }
+  
 
 module.exports = {
     getAll,
-    save
+    save,
+    remove,
+    find
 }
