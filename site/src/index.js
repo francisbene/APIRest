@@ -1,7 +1,11 @@
-var express = require('express')
-var app = express()
+const express = require('express')
+const request = require('request-promise-native');
 
-app.get('/produtos', function(req, res) {
+const app = express()
+
+app.get('/produtos', async function(req, res) {
+    const result = await request.get('http://localhost:3000/api/v1/products')
+    console.log(JSON.parse(result).data);
     res.send('hello word');
 }),
 
