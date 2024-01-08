@@ -8,8 +8,8 @@ app.set('views', './src/views');
 
 app.get('/produtos', async function(req, res) {
     const result = await request.get('http://localhost:3000/api/v1/products')
-    console.log(JSON.parse(result).data);
-    res.send('hello word');
+    const products = JSON.parse(result).data;
+    res.render('products', {products: products});
 }),
 
 app.listen(3001, function() {
