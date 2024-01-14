@@ -8,7 +8,7 @@ const transformer = product => ({
       price: product.price,
     },
     links: {
-      self: '/api/v1/products/${product.id}'
+      self: "/api/v1/products/${product.id}"
     }
   });
 
@@ -20,7 +20,7 @@ const transformer = product => ({
  };
 
  const find = async (req) => {
-    const product = await ProductModel.findById(req.params.id);
+    const product = await productModel.findById(req.params.id);
     return { data: transformer(product) };
   };
   
@@ -40,12 +40,32 @@ const save = async (req, h) => {
 const remove = async (req, h) => {
     await productModel.findOneAndDelete({_id: req.params.id});
     return h.response().code(204);
- }
-  
+}
+
+const update = async (req, h) => {
+  const { name, price } = req.payload;
+
+  try {
+      const updatedProduct = await productModel.findByIdAndUpdate(
+          req.params.id,
+          { name, price },
+          { new: true } // Retorna o documento atualizado
+      );
+
+      if (!updatedProduct) {
+          return h.response().code(404); // Produto não encontrado
+      }
+
+      return h.response(transformer(updatedProduct)).code(200);
+  } catch (error) {
+      return h.response(error).code(500); // Tratar erros de forma apropriada
+  }
+};
 
 module.exports = {
     getAll,
     save,
     remove,
-    find
+    find,
+    update
 }
